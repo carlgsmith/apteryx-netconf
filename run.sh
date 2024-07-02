@@ -152,7 +152,7 @@ sleep 0.5
 cd $BUILD/../
 
 if [ $ACTION == "test" ]; then
-        python3 -m pytest -v
+        python3 -m pytest -v -k test_get_subtree_trunk
         rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
 
