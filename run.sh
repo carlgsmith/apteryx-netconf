@@ -155,14 +155,8 @@ rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 sleep 0.5
 cd $BUILD/../
 
-# Check state
-ip link show
-netstat -nlap
-ps -ef
-
 if [ $ACTION == "test" ]; then
         python3 -m pytest -v -k test_get_subtree_trunk
-        journalctl --no-pager
         rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
 
