@@ -215,6 +215,7 @@ def connect():
         os.system("cat ncclient.log")
         raise
 
+
 def toXML(xml_str):
     parser = etree.XMLParser(remove_blank_text=True)
     return etree.XML(xml_str, parser=parser)
