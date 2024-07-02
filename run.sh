@@ -69,26 +69,28 @@ cp $BUILD/apteryx-xml/models/*.xml $BUILD/etc/apteryx/schema/
 cp $BUILD/apteryx-xml/models/*.map $BUILD/etc/apteryx/schema/
 
 # Check openssh
-if [ ! -d openssh ]; then
-        echo "Downloading openssh"
-        git clone --depth 1 --branch V_8_8_P1 git://anongit.mindrot.org/openssh.git
-        rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-fi
-if [ ! -f $BUILD/usr/sbin/sshd ]; then
-        echo "Building openssh"
-        cd openssh
-        autoreconf -fvi
-        ./configure --prefix=/usr --with-privsep-path=$BUILD/empty --with-privsep-user=manager
-        make install-nokeys DESTDIR=$BUILD
-        rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-        cd $BUILD
-        mkdir -p $BUILD/empty
-        chmod 755 $BUILD/empty
-        sudo chown root:sys $BUILD/empty
-fi
+# if [ ! -d openssh ]; then
+#         echo "Downloading openssh"
+#         git clone --depth 1 --branch V_8_8_P1 git://anongit.mindrot.org/openssh.git
+#         rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+# fi
+# if [ ! -f $BUILD/usr/sbin/sshd ]; then
+#         echo "Building openssh"
+#         cd openssh
+#         autoreconf -fvi
+#         ./configure --prefix=/usr --with-privsep-path=$BUILD/empty --with-privsep-user=manager
+#         make install-nokeys DESTDIR=$BUILD
+#         rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+#         cd $BUILD
+#         mkdir -p $BUILD/empty
+#         chmod 755 $BUILD/empty
+#         sudo chown root:sys $BUILD/empty
+# fi
 if [ ! -f $BUILD/ssh_host_rsa_key ]; then
-    $BUILD/usr/bin/ssh-keygen -b 2048 -t rsa -f $BUILD/ssh_host_rsa_key -q -N ""
+    /usr/bin/ssh-keygen -b 2048 -t rsa -f $BUILD/ssh_host_rsa_key -q -N ""
+    rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
+mkdir -p /run/sshd
 echo -e "
 LogLevel DEBUG3
 HostKey $BUILD/ssh_host_rsa_key
@@ -136,7 +138,7 @@ rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 # Start sshd
 sudo useradd -M -p $(perl -e 'print crypt($ARGV[0], "password")' 'friend') manager
 rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
-sudo $BUILD/usr/sbin/sshd -f $BUILD/sshd_config
+sudo /usr/sbin/sshd -f $BUILD/sshd_config
 rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 
 # Parameters
@@ -159,9 +161,6 @@ cd $BUILD/../
 
 if [ $ACTION == "test" ]; then
         python3 -m pytest -v -k test_get_subtree_trunk
-	ls -l /var/log
-        cat /var/log/syslog
-	cat /var/log/auth.log
         rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
 
