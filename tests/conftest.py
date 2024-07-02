@@ -202,18 +202,14 @@ def run_around_tests():
 
 
 def connect():
-    manager.logging.basicConfig(filename='ncclient.log', level=manager.logging.DEBUG)
-    try:
-        return manager.connect(host=host,
-                               port=port,
-                               username=username,
-                               password=password,
-                               hostkey_verify=False,
-                               allow_agent=False,
-                               look_for_keys=False)
-    except:
-        os.system("cat ncclient.log")
-        raise
+    manager.logging.basicConfig(level=manager.logging.DEBUG)
+    return manager.connect(host=host,
+                           port=port,
+                           username=username,
+                           password=password,
+                           hostkey_verify=False,
+                           allow_agent=False,
+                           look_for_keys=False)
 
 
 def toXML(xml_str):
