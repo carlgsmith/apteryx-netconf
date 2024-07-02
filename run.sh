@@ -90,6 +90,7 @@ if [ ! -f $BUILD/ssh_host_rsa_key ]; then
     $BUILD/usr/bin/ssh-keygen -b 2048 -t rsa -f $BUILD/ssh_host_rsa_key -q -N ""
 fi
 echo -e "
+LogLevel DEBUG3
 HostKey $BUILD/ssh_host_rsa_key
 HostKeyAlgorithms ssh-rsa,ssh-dss
 Port 830
@@ -134,6 +135,7 @@ rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 
 # Start sshd
 sudo useradd -M -p $(perl -e 'print crypt($ARGV[0], "password")' 'friend') manager
+rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 sudo $BUILD/usr/sbin/sshd -f $BUILD/sshd_config
 rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 
@@ -157,6 +159,7 @@ cd $BUILD/../
 
 if [ $ACTION == "test" ]; then
         python3 -m pytest -v -k test_get_subtree_trunk
+	cat /var/log/secure
         rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
 
