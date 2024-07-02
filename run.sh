@@ -117,6 +117,10 @@ cp $BUILD/../models/*.xml $BUILD/etc/apteryx/schema/
 cp $BUILD/../models/*.map $BUILD/etc/apteryx/schema/
 cp $BUILD/../models/netconf-logging-options $BUILD/etc/apteryx/schema/
 
+if [ $ACTION == "build" ]; then
+    exit 0
+fi
+
 # Check tests
 echo Checking pytest coding style ...
 flake8 --max-line-length=180 ../tests/*.py
