@@ -160,7 +160,8 @@ cd $BUILD/../
 if [ $ACTION == "test" ]; then
         python3 -m pytest -v -k test_get_subtree_trunk
 	ls -l /var/log
-	cat /var/log/auth
+        cat /var/log/syslog
+	cat /var/log/auth.log
         rc=$?; if [[ $rc != 0 ]]; then quit $rc; fi
 fi
 
